@@ -101,8 +101,8 @@ class Testimony {
     this.getPoses();
     this.buttonNextStatement.addEventListener('click', this.nextStatement.bind(this));
     this.buttonPrevStatement.addEventListener('click', this.prevStatement.bind(this));
-    this.getCharacterWatcher();
-    this.addListenerMovements(); 
+    //this.getCharacterWatcher();
+    this.setupMovementListener(); 
     console.log("Testimony Mode Setup Complete");
   }
 
@@ -317,28 +317,31 @@ class Testimony {
     }
   }
 
-  addListenerMovements() {
-    externals.messageListeners.addMessageListener(window, 'plain_message', (message) => {
-      console.log("Plain message received: ", message);
-      console.log("Actual message: ", message.text);
+  setupMovementListener() {
+    let chatListener = new MutationObserver((mutations, observer) => {
+      const lastMessage = this.court.objection_lol_resources.chat.lastChild;
+      if(!lastMessage) return; // At this point, there have been no messages sent
 
+      const isPlainText = lastMessage.querySelector('[data-testid="NoteIcon"]');
+      if(!isPlainText) return; //It is a message sent through the text box.
 
-      const direction = 
-      externals.unknown.testRegex(message.text, "[> ]*") ? ">" 
-      : externals.unknown.testRegex(message.text, "[< ]*") ? "<" : undefined;
+      const message = lastMessage.lastChild.children[1].textContent;
+      const direction = externals.unknown.testRegex(message, "[> ]*") ? ">" 
+      : externals.unknown.testRegex(message, "[< ]*") ? "<" : undefined;
 
-      console.log(message);
-      console.log(message.text);
-
-      if(direction && message.text.includes(direction)) {
+      if(direction && message.includes(direction)) {
         this.testimonyArrow(direction);
-      } else if(externals.unknown.testRegex(message.text, '<[0-9]*?>')) {
-        const position = Number(message.text.slice(1, -1));
+      } else if(externals.unknown.testRegex(message, '<[0-9]*?>')) {
+        const position = Number(message.slice(1, -1));
         this.testimonyPosition(position);
       }
     });
+
+    chatListener.observe(this.court.objection_lol_resources.chat, {
+      childList: true,
+      subtree: true
+    })
   }
-  
 
   toStatement(statement) {
     let statementElem;
