@@ -258,7 +258,7 @@ class Testimony {
   }
 
   testimonyArrow(arrow) {
-    if(!this.testimonyLocked && !this.auto) return;
+    if(!this.testimonyLocked || !this.auto) return;
     
     if (arrow === '>') this.nextStatement();
     else if (arrow === '<') this.prevStatement();
