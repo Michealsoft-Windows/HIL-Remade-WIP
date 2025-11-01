@@ -54,21 +54,22 @@ class Courtroom {
 
   async _loadObjectionLolResources() {
     const app = this.objection_lol_resources.app;
-    const [textArea, textButton, chatBox, chat, CourtroomWindow, CourtroomLeftSide, CourtroomRightSide] = await Promise.all([
+    const [textArea, textButton, chatBox, chat, CourtroomWindow, CourtroomLeftSide, CourtroomRightSide, textBoxContainer] = await Promise.all([
       HILRHelpers.waitForElement(".MuiInputBase-input.MuiOutlinedInput-input", app),
       HILRHelpers.waitForElement(".MuiButtonBase-root.MuiIconButton-root.MuiIconButton-colorInherit.MuiIconButton-sizeMedium.css-11rdika", app),
       HILRHelpers.waitForElement(".MuiStack-root.css-ijtv1l", app),
       HILRHelpers.waitForElement(".MuiList-root.MuiList-padding.css-f8flsj", app),
       HILRHelpers.waitForElement(".MuiGrid2-root.MuiGrid2-container.MuiGrid2-direction-xs-row.MuiGrid2-spacing-xs-1.css-3vuqz1", app),
       HILRHelpers.waitForElement(".MuiStack-root.css-j7qwjs", app),
-      HILRHelpers.waitForElement(".MuiGrid2-root.MuiGrid2-direction-xs-row.MuiGrid2-grid-xs-0.MuiGrid2-grid-md-5.MuiGrid2-grid-lg-5.css-wpmqq4", app)
+      HILRHelpers.waitForElement(".MuiGrid2-root.MuiGrid2-direction-xs-row.MuiGrid2-grid-xs-0.MuiGrid2-grid-md-5.MuiGrid2-grid-lg-5.css-wpmqq4", app),
+      HILRHelpers.waitForElement(".MuiOutlinedInput-notchedOutline.css-kdbx36", app)
     ]);
     
     const themeData = HILRExts.theme.getTheme();
     this.theme = themeData.theme;
     themeData.themeInput.addEventListener('click', this.applyTheme.bind(this));
 
-    const requiredResources = [textArea, textButton, chatBox, chat, CourtroomWindow, CourtroomLeftSide, CourtroomRightSide];
+    const requiredResources = [textArea, textButton, chatBox, chat, CourtroomWindow, CourtroomLeftSide, CourtroomRightSide, textBoxContainer];
     const results = requiredResources.every(elem => elem);
     if(!results) throw new Error("there was an error with the ui");
     let textValue = text => HILRExts.text.setValue(textArea, text);
@@ -85,7 +86,8 @@ class Courtroom {
       CourtroomWindow,
       CourtroomLeftSide,
       CourtroomRightSide,
-      textValue,
+      textBoxContainer,
+      textValue
     });
   }
 

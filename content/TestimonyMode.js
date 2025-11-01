@@ -36,28 +36,33 @@ class Testimony {
     this.primeDiv.style.cssText = 'display: none;' + stylers.MISC.DEFAULT_TRANSITION;
 
     if(this.court.objection_lol_resources.textArea) {
-      this.court.objection_lol_resources.textArea.parentElement.appendChild(this.TestimonyArea);
-      this.court.objection_lol_resources.textArea.parentElement.appendChild(this.TestimonyDiv);
+      this.court.objection_lol_resources.textArea.parentElement.parentElement.appendChild(this.TestimonyArea);
+      this.court.objection_lol_resources.textArea.parentElement.parentElement.appendChild(this.TestimonyDiv);
     } else {
       throw Error("We cannot render these elements since the textArea failed to be found, please remake a function to check all elements before startup");
     }
 
     this.lockTestimony = externals.buttons.primaryButton(
       this.setupLockButton.bind(this), '',
-      'display: none; background-color: #7f3e44 !important; margin: 0 4px;', 
+      'display: none; background-color: #7f3e44 !important; margin: 0 4px; color: white;', 
       externals.creation.createIcon('check')
     );
+
+    const placeBeforeElem = this.court.objection_lol_resources.textArea;
+    const ancestor = placeBeforeElem.parentElement;
+    ancestor.before(this.TestimonyArea);
+    ancestor.before(this.TestimonyDiv);
     this.court.objection_lol_resources.textButton.parentElement.parentElement.insertBefore(this.lockTestimony, this.court.objection_lol_resources.textButton.parentElement);
 
     this.buttonNextStatement = externals.buttons.primaryButton(
       undefined, '', 
-      'background-color: #552a2e !important; margin-left: 4px;', 
+      'background-color: #552a2e !important; margin-left: 4px; color: white;', 
       externals.creation.createIcon('send')
     );
     this.buttonPrevStatement = externals.buttons.primaryButton(
       undefined, '', 
-      'background-color: #552a2e !important; margin-left: 4px;', 
-      externals.creation.createIcon('send', 24, 'transform: scaleX(-1);')
+      'background-color: #552a2e !important; margin-left: 4px; transform: scaleX(-1); color: white;', 
+      externals.creation.createIcon('send')
     );
 
     this.primeDiv.appendChild(this.buttonPrevStatement);
@@ -129,6 +134,7 @@ class Testimony {
     this.lockTestimony.firstElementChild.classList.replace('mdi-check', 'mdi-close');
     this.primeDiv.style.display = 'block';
     this.TestimonyDiv.textContent = undefined;
+    this.court.objection_lol_resources.textBoxContainer.style.cssText = "border: none;";
   }
 
   unlockUISetup() {
@@ -136,6 +142,7 @@ class Testimony {
     this.primeDiv.style.display = 'none';
     this.TestimonyArea.style.display = 'block';
     this.TestimonyDiv.style.display = 'none';
+    this.court.objection_lol_resources.textBoxContainer.style.cssText = "";
   }
 
   setupLockButton() {
@@ -245,6 +252,7 @@ class Testimony {
     } else {
         this.TestimonyArea.style.display = 'block';
     }
+    if(this.testimonyLocked) this.court.objection_lol_resources.textBoxContainer.style.cssText = "border: none;";
   }
 
   onDisable() {
@@ -254,7 +262,8 @@ class Testimony {
 
     this.court.objection_lol_resources.textButton.parentElement.style.display = 'block';
     this.lockTestimony.style.display = 'none';
-    this.primeDiv.style.display = 'none'; 
+    this.primeDiv.style.display = 'none';
+    if(this.testimonyLocked) this.court.objection_lol_resources.textBoxContainer.style.cssText = "";
   }
 
   testimonyArrow(arrow) {
